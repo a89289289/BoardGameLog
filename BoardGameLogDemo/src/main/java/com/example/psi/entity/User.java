@@ -15,15 +15,26 @@ import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
 @Entity
-public class Player {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String playerName;
-    private int playerScore;
-    private String playerNote;
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+	public CharSequence getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setPassword(String encode) {
+		// TODO Auto-generated method stub
+		
+	}
 
     // 省略構造函數、getter和setter方法
 }

@@ -2,34 +2,32 @@ package com.example.psi.entity;
 
 import java.util.List;
 
-import org.springframework.data.relational.core.mapping.Column;
-
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
 @Entity
-@Data
 public class GameRecord {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(value = "game_name")
     private String gameName;
-
-    @OneToMany(mappedBy = "gameRecord", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Player> players;
-
-    @Column(value = "photo")
     private String photo;
-
-    @Column(value = "text_record")
     private String textRecord;
 
-    // 省略構造函數、getter 和 setter
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "game_record_id")
+    private List<Player> players;
+
+    // 省略構造函數、getter和setter方法
 }
