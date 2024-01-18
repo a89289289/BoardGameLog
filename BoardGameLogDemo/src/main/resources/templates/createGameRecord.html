@@ -7,7 +7,7 @@
   <title>RWD 表單</title>
 </head>
 <body>
-
+<div th:replace="fragments/header :: header"></div>
 <div class="container mt-5">
   <form action="/gameRecords/saveRecord" method="post" th:object="${gameRecord}">
     <div class="form-group">

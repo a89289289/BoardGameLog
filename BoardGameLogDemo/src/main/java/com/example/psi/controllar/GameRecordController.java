@@ -1,19 +1,21 @@
 package com.example.psi.controllar;
 
+import com.example.psi.entity.GameRecord;
+import com.example.psi.service.GameRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.psi.entity.GameRecord;
-import com.example.psi.repository.GameRecordRepository;
+import java.util.List;
 
 @Controller
-@RequestMapping("/gameRecords")
 public class GameRecordController {
 
     @Autowired
-    private GameRecordRepository gameRecordRepository;
+    private GameRecordService gameRecordService;
 
     @GetMapping("/createForm")
     public String createForm(Model model) {
@@ -23,7 +25,14 @@ public class GameRecordController {
 
     @PostMapping("/saveRecord")
     public String saveRecord(@ModelAttribute GameRecord gameRecord) {
-        gameRecordRepository.save(gameRecord);
-        return "redirect:/gameRecords/createForm";
+        gameRecordService.saveGameRecord(gameRecord);
+        return "redirect:/createForm";
+    }
+
+    @GetMapping("/showRecords")
+    public String showRecords(Model model) {
+        List<GameRecord> gameRecords = gameRecordService.getAllGameRecords();
+        model.addAttribute("gameRecords", gameRecords);
+        return "showRecords";
     }
 }
