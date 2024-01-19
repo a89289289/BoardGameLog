@@ -1,20 +1,16 @@
 package com.example.psi.entity;
 
-import java.util.List;
+import org.springframework.data.relational.core.mapping.Table;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import lombok.Data;
+import jakarta.persistence.ManyToOne;  
 
 @Entity
+@Table(name = "players")
 public class Player {
 
     @Id
@@ -25,5 +21,11 @@ public class Player {
     private int playerScore;
     private String playerNote;
 
-    // 省略構造函數、getter和setter方法
+    @ManyToOne
+    @JoinColumn(name = "game_record_id")
+    private GameRecord gameRecord;
+
+    // Getters and setters
+
+    // Constructors
 }

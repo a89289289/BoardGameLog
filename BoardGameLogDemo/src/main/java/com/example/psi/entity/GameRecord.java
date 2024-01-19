@@ -2,19 +2,17 @@ package com.example.psi.entity;
 
 import java.util.List;
 
+import org.springframework.data.relational.core.mapping.Table;
+
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import lombok.Data;
 
 @Entity
+@Table(name = "game_records")
 public class GameRecord {
 
     @Id
@@ -22,12 +20,14 @@ public class GameRecord {
     private Long id;
 
     private String gameName;
+    private String gameDate;
     private String photo;
     private String textRecord;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "game_record_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gameRecord")
     private List<Player> players;
 
-    // 省略構造函數、getter和setter方法
+    // Getters and setters
+
+    // Constructors
 }
