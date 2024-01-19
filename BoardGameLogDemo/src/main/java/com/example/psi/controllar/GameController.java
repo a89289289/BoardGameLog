@@ -21,7 +21,7 @@ public class GameController {
     @GetMapping("/createForm")
     public String createForm(Model model) {
         model.addAttribute("gameRecord", new GameRecord());
-        return "createGameForm";
+        return "createGameRecord";
     }
 
     @PostMapping("/saveRecord")
