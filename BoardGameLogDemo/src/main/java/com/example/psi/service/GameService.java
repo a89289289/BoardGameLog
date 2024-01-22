@@ -2,6 +2,7 @@ package com.example.psi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.psi.entity.GameRecord;
 import com.example.psi.repository.GameRecordRepository;
@@ -13,6 +14,7 @@ public class GameService {
     @Autowired
     private GameRecordRepository gameRecordRepository;
 
+   
     @Autowired
     private PlayerRepository playerRepository;
 
