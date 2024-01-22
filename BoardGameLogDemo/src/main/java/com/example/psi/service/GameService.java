@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.psi.entity.GameRecord;
 import com.example.psi.repository.GameRecordRepository;
-import com.example.psi.repository.PlayerJpaRepository;
+import com.example.psi.repository.PlayerRepository;
 
 @Service
 public class GameService {
@@ -14,7 +14,7 @@ public class GameService {
     private GameRecordRepository gameRecordRepository;
 
     @Autowired
-    private PlayerJpaRepository playerRepository;
+    private PlayerRepository playerRepository;
 
     public void saveGameRecord(GameRecord gameRecord) {
         gameRecordRepository.save(gameRecord);

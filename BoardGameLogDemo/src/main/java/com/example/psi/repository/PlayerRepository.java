@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.example.psi.entity.Player;
 
 @Repository
-public interface PlayerJpaRepository extends JpaRepository<Player, Long> {
+public interface PlayerRepository extends JpaRepository<Player, Long> {
     // 可以新增特定的查詢方法，如果有需要
 }

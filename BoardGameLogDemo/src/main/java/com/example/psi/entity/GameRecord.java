@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 
+
 @Data
 @Entity
 @Table(name = "game_records")
@@ -24,7 +25,11 @@ public class GameRecord {
 
     private String gameName;
     private String gameDate;
-    private String photo; // MultipartFile
+
+    // Assuming "photo" is used for file upload
+    // Make sure you have appropriate logic to handle file upload and storage
+    private String photo;
+
     private String textRecord;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "gameRecord")

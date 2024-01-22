@@ -19,9 +19,8 @@ public class GameController {
     private GameService gameService;
 
     @GetMapping("/createForm")
-    public String createForm(Model model, @ModelAttribute("gameRecord") GameRecord gameRecord) {
-//    	GameRecord gr = new GameRecord();
-//        model.addAttribute("gameRecord", gr);
+    public String createForm(Model model) {
+    	model.addAttribute("gameRecord", new GameRecord());
         return "createGameRecord";
     }
 
