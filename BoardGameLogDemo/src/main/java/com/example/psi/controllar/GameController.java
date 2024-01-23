@@ -49,6 +49,7 @@ public class GameController {
         return "home";
     }
     
+        
     @GetMapping("/login")
     public String login(Model model) {
     	

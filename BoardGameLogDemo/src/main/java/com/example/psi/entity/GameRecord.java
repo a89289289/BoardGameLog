@@ -1,7 +1,6 @@
 package com.example.psi.entity;
 
-import java.util.List;
-
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 
+import java.util.List;
 
 @Data
 @Entity
@@ -26,8 +26,8 @@ public class GameRecord {
     private String gameName;
     private String gameDate;
 
-    // Assuming "photo" is used for file upload
-    // Make sure you have appropriate logic to handle file upload and storage
+    // Change the type to MultipartFile for handling file upload
+    
     private String photo;
 
     private String textRecord;
