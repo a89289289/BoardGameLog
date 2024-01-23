@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+	crossorigin="anonymous">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+	crossorigin="anonymous"></script>
+<title>建立遊戲</title>
+</head>
+<body>
+	<div th:replace="fragments/header :: header"></div>
+	<div class="container mt-5">
+		<form action="/gameRecords/saveRecord" method="post"
+			th:object="${gameRecord}">
+			<div class="form-group">
+				<label for="gameName">遊戲名稱</label> <input type="text"
+					class="form-control" id="gameName" th:field="*{gameName}"
+					placeholder="輸入遊戲名稱">
+			</div>
+			<div class="form-group">
+				<label for="gameDate">遊戲日期</label> <input type="date"
+					class="form-control" id="gameDate" th:field="*{gameDate}" required>
+			</div>
+			<div class="form-group">
+				<label for="photo">上傳照片</label> <input type="file"
+					class="form-control-file" id="photo" th:field="*{photo}">
+			</div>
+
+			<div class="form-group">
+				<label for="textRecord">文字記錄</label>
+				<textarea class="form-control" id="textRecord"
+					th:field="*{textRecord}" rows="3" placeholder="輸入文字記錄"></textarea>
+			</div>
+
+			<div class="form-group">
+				<label>玩家</label>
+				<div th:each="player, playerStat : *{players}">
+					<div class="form-row mb-2">
+						<div class="col">
+							<input type="text" class="form-control" placeholder="玩家名稱"
+								th:field="*{players[__${playerStat.index}__].playerName}"
+								required>
+						</div>
+						<div class="col">
+							<input type="number" class="form-control" placeholder="分數"
+								th:field="*{players[__${playerStat.index}__].playerScore}"
+								required>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control" placeholder="備註"
+								th:field="*{players[__${playerStat.index}__].playerNote}">
+						</div>
+					</div>
+				</div>
+				<button type="button" class="btn btn-success" onclick="addPlayer()">新增玩家</button>
+			</div>
+
+			<button type="submit" class="btn btn-primary">提交</button>
+		</form>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+		function addPlayer() {
+			var index = document
+					.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
+			var playerHtml = '<div class="form-row mb-2">'
+					+ '<div class="col">'
+					+ '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
+					+ '</div>'
+					+ '<div class="col">'
+					+ '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
+					+ '</div>'
+					+ '<div class="col">'
+					+ '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
+					+ '</div>' + '</div>';
+
+			$(".form-group > .btn-success").before(playerHtml);
+		}
+	</script>
+</body>
+</html>
