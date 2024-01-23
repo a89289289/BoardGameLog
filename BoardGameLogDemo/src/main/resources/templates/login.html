@@ -31,16 +31,12 @@
                     <label for="password" class="form-label">密碼:</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="請輸入密碼" value="pass123" required>
                 </div>
-                <div class="mb-3">
-                    <label for="code" class="form-label">驗證:</label>
-                    <input type="text" class="form-control" id="code" name="code">
-                    <img src="./getcode" alt="驗證碼" class="align-middle">
-                </div>
-                <button type="submit" class="btn btn-primary">前台登入</button>
+               
+                <button type="submit" class="btn btn-primary">登入</button>
                 <button type="button" class="btn btn-primary" onclick="githubLoginBackend()">Google登入</button>
-                <button type="button" class="btn btn-primary" onclick="loginBackend()">後台登入</button>
+                
             </fieldset>
-            <div style="color: red">${ loginMessage }</div>
+            
         </form>
     </div>
 

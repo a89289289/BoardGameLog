@@ -1,5 +1,7 @@
 package com.example.psi.controllar;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.psi.entity.GameRecord;
+import com.example.psi.repository.GameRecordRepository;
 import com.example.psi.service.GameService;
 
 @Controller
@@ -17,6 +20,8 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
+    @Autowired
+    private GameRecordRepository gameRecordRepository;
 
     @GetMapping("/createForm")
     public String createForm(Model model) {
@@ -36,9 +41,13 @@ public class GameController {
         model.addAttribute("gameRecords", gameRecords);
         return "showRecords";
     }
+    
     @GetMapping("/home")
     public String home(Model model) {
-        
+    	List<GameRecord> gameRecords = gameRecordRepository.findAll();
+        model.addAttribute("gameRecords", gameRecords);
         return "home";
     }
+    
+    
 }
