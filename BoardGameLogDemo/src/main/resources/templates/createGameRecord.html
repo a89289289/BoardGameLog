@@ -20,28 +20,28 @@
 	<div class="container mt-5">
 
 		<form action="./saveRecord" method="post" th:object="${gameRecord}">
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
 					placeholder="輸入遊戲名稱">
 			</div>
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="gameDate">遊戲日期</label> <input type="date"
 					class="form-control" id="gameDate" th:field="*{gameDate}" required>
 			</div>
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="photo">上傳照片</label> <input type="text"
 					class="form-control-file" id="photo" th:field="*{photo}">
 			</div>
 
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="textRecord">文字記錄</label>
 				<textarea class="form-control" id="textRecord"
 					th:field="*{textRecord}" rows="3" placeholder="輸入文字記錄"></textarea>
 			</div>
 
 
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label>玩家</label>
 				<div th:each="player, playerStat : *{players}">
 					<div class="form-row mb-2">

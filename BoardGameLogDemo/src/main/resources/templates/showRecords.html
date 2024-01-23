@@ -15,15 +15,12 @@
 <body>
 	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
-		<div class="mb-3">
-			<button class="btn btn-primary" id="addRecordBtn">新增</button>
-			<button class="btn btn-warning" id="modifyRecordBtn">修改</button>
-			<button class="btn btn-danger" id="deleteRecordBtn">刪除</button>
-		</div>
 
 		<table class="table table-striped table-responsive">
 			<thead>
 				<tr>
+					<!-- 新增列 -->
+					<th></th>
 					<th>遊戲名稱</th>
 					<th>遊戲日期</th>
 					<th>照片</th>
@@ -36,13 +33,16 @@
 			<tbody>
 				<!-- 根據您的 Thymeleaf 模型進行迭代 -->
 				<tr th:each="gameRecord : ${gameRecords}">
+					<!-- 新增按鈕列 -->
+					<td>
+						<button class="btn btn-success btn-sm">修改</button>
+						<button class="btn btn-danger btn-sm">刪除</button>
+					</td>
 					<td th:text="${gameRecord.gameName}"></td>
 					<td th:text="${gameRecord.gameDate}"></td>
 					<td th:text="${gameRecord.photo}"></td>
 					<td th:text="${gameRecord.textRecord}"></td>
-		<!--  d th:text="${gameRecord.players[0].playerName}"></td>
-					<td th:text="${gameRecord.players[0].playerScore}"></td>
-					<td th:text="${gameRecord.players[0].playerNote}"></td> -->
+					<!-- 玩家相關資料的 Thymeleaf 迭代 -->
 				</tr>
 				<!-- Thymeleaf 迭代的結束 -->
 			</tbody>

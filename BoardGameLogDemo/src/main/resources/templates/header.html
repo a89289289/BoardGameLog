@@ -11,13 +11,15 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 	crossorigin="anonymous"></script>
+	
+	
 <title>Insert title here</title>
 </head>
 <body>
 	<header xmlns:th="http://www.thymeleaf.org" th:fragment="header">
 
 		<nav
-			class="navbar navbar-expand-lg navbar-light bg-info p-2 text-dark bg-opacity-25">
+			class="navbar navbar-expand-lg navbar-light bg-info p-2 text-dark bg-opacity-75">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="#">桌遊紀錄</a>
 				<button class="navbar-toggler" type="button"
@@ -34,11 +36,11 @@
 							th:href="@{/gameRecords/createForm}">建立遊戲</a></li>
 						<li class="nav-item"><a class="nav-link"
 							th:href="@{/gameRecords/showRecords}">遊戲紀錄</a></li>
-
 					</ul>
 					<form class="d-flex">
-						<input class="form-control me-2" type="search"
-							placeholder="Search" aria-label="Search">
+						<a class="nav-link" th:href="@{/login}">登出</a> <input
+							class="form-control me-2" type="search" placeholder="Search"
+							aria-label="Search">
 						<button class="btn btn-outline-success" type="submit">搜尋</button>
 					</form>
 				</div>
