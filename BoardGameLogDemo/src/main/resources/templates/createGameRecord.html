@@ -9,6 +9,7 @@
 	rel="stylesheet"
 	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
 	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
@@ -20,10 +21,12 @@
 	<div class="container mt-5">
 
 		<form action="./saveRecord" method="post" th:object="${gameRecord}">
-			<div class="form-group m-3">
+			<div class="form-group m-3 position-relative">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
-					placeholder="輸入遊戲名稱">
+					placeholder="輸入遊戲名稱" oninput="handleInput()">
+				<ul class="list-group autocomplete-results" id="autocompleteResults"></ul>
+				<div id="thumbnailContainer" class="p-3 mb-2 bg-success text-white"></div>
 			</div>
 			<div class="form-group m-3">
 				<label for="gameDate">遊戲日期</label> <input type="date"
@@ -39,7 +42,6 @@
 				<textarea class="form-control" id="textRecord"
 					th:field="*{textRecord}" rows="3" placeholder="輸入文字記錄"></textarea>
 			</div>
-
 
 			<div class="form-group m-3">
 				<label>玩家</label>
@@ -68,14 +70,72 @@
 		</form>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-		crossorigin="anonymous"></script>
 	<script>
+		function handleInput() {
+			var searchTerm = document.getElementById("gameName").value;
+			var autocompleteResults = document
+					.getElementById("autocompleteResults");
+			var thumbnailContainer = document
+					.getElementById("thumbnailContainer");
+
+			// 若輸入字詞不為空，執行即時搜尋提示
+			if (searchTerm.length > 0) {
+				// 發送即時搜尋提示請求
+				var url = "https://boardgamegeek.com/xmlapi2/search?query="
+						+ encodeURIComponent(searchTerm) + "&type=boardgame";
+				$.ajax({
+					url : url,
+					type : 'GET',
+					success : function(data) {
+						showAutocompleteResults(data);
+						showThumbnail(data);
+					}
+				});
+			} else {
+				// 清空即時搜尋提示和縮圖
+				autocompleteResults.innerHTML = "";
+				thumbnailContainer.innerHTML = "";
+			}
+		}
+
+		function showAutocompleteResults(data) {
+			var autocompleteResults = document
+					.getElementById("autocompleteResults");
+
+			// 顯示搜尋結果
+			autocompleteResults.innerHTML = "";
+			var results = data.querySelectorAll("item > name[type='primary']");
+			results.forEach(function(result) {
+				var li = document.createElement("li");
+				li.className = "list-group-item";
+				li.textContent = result.getAttribute("value");
+				li.onclick = function() {
+					// 點擊提示時，將提示內容填入輸入框
+					document.getElementById("gameName").value = result
+							.getAttribute("value");
+					// 清空提示列表
+					autocompleteResults.innerHTML = "";
+				};
+				autocompleteResults.appendChild(li);
+			});
+		}
+
+		function showThumbnail(data) {
+			console.log("API Response:", data);
+		    var thumbnailContainer = document.getElementById("thumbnailContainer");
+		    var thumbnailUrlElement = data.querySelector("item > thumbnail");
+
+		    // 清空縮圖容器
+		    thumbnailContainer.innerHTML = "";
+
+		    if (thumbnailUrlElement) {
+		        var thumbnailUrl = thumbnailUrlElement.textContent;
+		        console.log("Thumbnail URL:", thumbnailUrl); // 添加调试信息
+		        // 顯示縮圖
+		        thumbnailContainer.innerHTML = '<img src="' + thumbnailUrl + '" alt="Game Thumbnail" class="img-thumbnail">';
+		    }
+		}
+
 		function addPlayer() {
 			var index = document
 					.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
