@@ -36,4 +36,9 @@ public class GameController {
         model.addAttribute("gameRecords", gameRecords);
         return "showRecords";
     }
+    @GetMapping("/home")
+    public String home(Model model) {
+        
+        return "home";
+    }
 }

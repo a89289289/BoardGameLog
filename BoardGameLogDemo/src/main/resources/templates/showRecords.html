@@ -9,8 +9,8 @@
 	rel="stylesheet"
 	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
 	crossorigin="anonymous">
-	
-	<title>顯示記錄</title>
+
+<title>顯示記錄</title>
 </head>
 <body>
 	<div th:insert="header :: header"></div>
@@ -40,9 +40,9 @@
 					<td th:text="${gameRecord.gameDate}"></td>
 					<td th:text="${gameRecord.photo}"></td>
 					<td th:text="${gameRecord.textRecord}"></td>
-		<!--  		<td th:text="${gameRecord.players[0].playerName}"></td>
+		<!--  d th:text="${gameRecord.players[0].playerName}"></td>
 					<td th:text="${gameRecord.players[0].playerScore}"></td>
-					<td th:text="${gameRecord.players[0].playerNote}"></td>-->	
+					<td th:text="${gameRecord.players[0].playerNote}"></td> -->
 				</tr>
 				<!-- Thymeleaf 迭代的結束 -->
 			</tbody>

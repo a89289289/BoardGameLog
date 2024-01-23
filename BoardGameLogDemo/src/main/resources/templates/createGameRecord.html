@@ -19,7 +19,7 @@
 	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
 
-		<form action="/gameRecords/saveRecord" method="post" th:object="${gameRecord}">
+		<form action="./saveRecord" method="post" th:object="${gameRecord}">
 			<div class="form-group">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
