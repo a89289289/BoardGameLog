@@ -22,27 +22,27 @@
 //
 //    @Override
 //    public void run(String... args) throws Exception {
-//        // 在這裡添加你的預先注入數據的邏輯
-//
-//        for (int i = 1; i <= 5; i++) {
-//            // 創建一個GameRecord對象
+//        for (int i = 1; i <= 2; i++) {
+//            // 创建一个GameRecord对象
 //            GameRecord gameRecord = new GameRecord();
 //            gameRecord.setGameName("Game " + i);
 //            gameRecord.setGameDate("2024-01-22");
-////            gameRecord.setPhoto("example.jpg");
 //            gameRecord.setTextRecord("Example text record for Game " + i);
 //
-//            // 創建4個Player對象
-//            List<Player> players = new ArrayList<>();
-//            for (int j = 1; j <= 3; j++) {
-//                players.add(new Player());
-//            }
-//
-//            gameRecord.setPlayers(players);
-//
-//            // 將GameRecord和相應的Player保存到數據庫
+//            // 保存GameRecord到数据库
 //            gameRecordRepository.save(gameRecord);
-//            playerRepository.saveAll(players);
+//
+//            // 创建并保存4个Player对象，每个GameRecord关联4个Player
+//            for (int j = 1; j <= 4; j++) {
+//                Player player = new Player();
+//                player.setPlayerName("Player " + (i * 4 + j));
+//                player.setPlayerScore((int) (Math.random() * 100)); // 随机分数
+//                player.setPlayerNote("Note for Player " + (i * 4 + j));
+//                player.setGameRecord(gameRecord); // 设置关联
+//
+//                // 保存Player到数据库
+//                playerRepository.save(player);
+//            }
 //        }
 //    }
 //}

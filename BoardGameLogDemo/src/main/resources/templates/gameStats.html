@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Game Statistics</title>
+</head>
+<body>
+    <h2>Game Statistics</h2>
+    <table>
+        <tr>
+            <th>Game Name</th>
+            <th>Play Times</th>
+        </tr>
+        <tr th:each="entry : ${gamePlayTimes}">
+            <td th:text="${entry.key}"></td>
+            <td th:text="${entry.value}"></td>
+        </tr>
+    </table>
+</body>
+</html>
