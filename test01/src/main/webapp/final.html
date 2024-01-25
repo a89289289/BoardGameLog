@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>桌遊搜尋</title>
+  <style>
+    #autocompleteContainer {
+      position: relative;
+      display: inline-block;
+    }
+
+    #autocompleteResults {
+      position: absolute;
+      z-index: 1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    #autocompleteResults li {
+      padding: 8px;
+      cursor: pointer;
+      background-color: #f9f9f9;
+    }
+
+    #autocompleteResults li:hover {
+      background-color: #e5e5e5;
+    }
+
+    #resultContainer {
+      margin-top: 20px;
+    }
+
+    .game {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .game img {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>桌遊搜尋</h1>
+  <div id="autocompleteContainer">
+    <label for="searchInput">輸入搜尋字詞：</label>
+    <input type="text" id="searchInput" oninput="handleInput()">
+    <ul id="autocompleteResults"></ul>
+  </div>
+
+  <button onclick="searchBoardGames()">搜尋</button>
+
+  <div id="resultContainer">
+    <!-- 這裡顯示搜尋結果 -->
+  </div>
+
+  <script>
+    function handleInput() {
+      var searchTerm = document.getElementById("searchInput").value;
+      var autocompleteResults = document.getElementById("autocompleteResults");
+
+      // 若輸入字詞不為空，執行即時搜尋提示
+      if (searchTerm.length > 0) {
+        // 發送即時搜尋提示請求
+        var url = "https://boardgamegeek.com/xmlapi2/search?query=" + encodeURIComponent(searchTerm) + "&type=boardgame";
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            var responseData = xhr.responseText;
+            var parser = new DOMParser();
+            var xmlDoc = parser.parseFromString(responseData, "text/xml");
+            var results = xmlDoc.querySelectorAll("item > name[type='primary']");
+            var suggestions = Array.from(results).map(function (nameElement) {
+              return nameElement.getAttribute("value");
+            });
+            showAutocompleteResults(suggestions);
+          }
+        };
+        xhr.send();
+      } else {
+        // 清空即時搜尋提示
+        autocompleteResults.innerHTML = "";
+      }
+    }
+
+    function showAutocompleteResults(results) {
+      var autocompleteResults = document.getElementById("autocompleteResults");
+
+      // 顯示搜尋結果
+      autocompleteResults.innerHTML = "";
+      results.forEach(function (result) {
+        var li = document.createElement("li");
+        li.textContent = result;
+        li.onclick = function () {
+          // 點擊提示時，將提示內容填入輸入框
+          document.getElementById("searchInput").value = result;
+          // 清空提示列表
+          autocompleteResults.innerHTML = "";
+        };
+        autocompleteResults.appendChild(li);
+      });
+    }
+
+    function searchBoardGames() {
+      var searchTerm = document.getElementById("searchInput").value;
+      var url = "https://boardgamegeek.com/xmlapi2/search?query=" + encodeURIComponent(searchTerm) + "&type=boardgame&exact=1";
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var responseData = xhr.responseText;
+          displaySearchResults(responseData);
+        }
+      };
+      xhr.send();
+    }
+
+    function displaySearchResults(data) {
+      var resultContainer = document.getElementById("resultContainer");
+      resultContainer.innerHTML = ""; // 清空之前的結果
+
+      var parser = new DOMParser();
+      var xmlDoc = parser.parseFromString(data, "text/xml");
+      var items = xmlDoc.querySelectorAll("item");
+
+      items.forEach(function (item) {
+        var nameElement = item.querySelector("name[type='primary']");
+        var name = nameElement ? nameElement.getAttribute("value") : "N/A";
+        var gameId = item.getAttribute("id");
+
+        // 創建遊戲元素
+        var gameElement = document.createElement("div");
+        gameElement.classList.add("game");
+
+        // 添加遊戲名稱
+        var nameElement = document.createElement("p");
+        nameElement.textContent = name;
+        gameElement.appendChild(nameElement);
+
+        // 發送第二個 API 請求獲取遊戲詳細信息（包括圖片）
+        var detailsUrl = "https://boardgamegeek.com/xmlapi2/thing?id=" + gameId + "&stats=1";
+        var detailsXhr = new XMLHttpRequest();
+        detailsXhr.open("GET", detailsUrl, true);
+        detailsXhr.onreadystatechange = function () {
+          if (detailsXhr.readyState == 4 && detailsXhr.status == 200) {
+            var detailsResponse = detailsXhr.responseText;
+            var detailsParser = new DOMParser();
+            var detailsXml = detailsParser.parseFromString(detailsResponse, "text/xml");
+            var thumbnailUrlElement = detailsXml.querySelector("thumbnail");
+            var thumbnailUrl = thumbnailUrlElement ? thumbnailUrlElement.textContent : "";
+            
+            // 添加遊戲縮圖
+            var thumbnailElement = document.createElement("img");
+            thumbnailElement.src = thumbnailUrl;
+            gameElement.appendChild(thumbnailElement);
+
+            // 將遊戲元素添加到結果容器中
+            resultContainer.appendChild(gameElement);
+          }
+        };
+        detailsXhr.send();
+      });
+    }
+  </script>
+</body>
+</html>

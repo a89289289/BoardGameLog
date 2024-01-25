@@ -10,20 +10,59 @@
 <!-- Google Charts API -->
 <script type="text/javascript"
 	src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-	google.charts.load('current', {
-		'packages' : [ 'bar', 'calendar' ]
-	});
-	google.charts.setOnLoadCallback(drawChart);
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    google.charts.load('current', {
+        'packages': ['bar']
+    });
+    google.charts.setOnLoadCallback(drawChart);
+    
+    function drawChart() {
+        // 使用 fetch 取得資料
+        fetch('./gameStats')
+            .then(response => response.json())
+            .then(data => {
+                // 將資料轉換為 Google Charts 需要的格式
+                const chartData = Object.entries(data).map(([gameName, playTimes]) => [gameName, playTimes]);
 
-	function drawChart() {
-		// 橫向長條圖表
-		var barData = google.visualization.arrayToDataTable([ [ '遊戲', '遊玩次數' ],
-				[ '遊戲1', 30 ], [ '遊戲2', 50 ], [ '遊戲3', 20 ], [ '遊戲4', 40 ],
-				[ '遊戲5', 25 ], [ '遊戲6', 35 ], [ '遊戲7', 15 ], [ '遊戲8', 45 ],
-				[ '遊戲9', 10 ], [ '遊戲10', 55 ], [ '遊戲11', 22 ],
-		// 在這裡添加更多遊戲和遊玩次數的資料
-		]);
+                // 建立資料表
+                const dataTable = new google.visualization.DataTable();
+                dataTable.addColumn('string', 'gameName');
+                dataTable.addColumn('number', 'playTimes');
+                dataTable.addRows(chartData);
+
+                // 設定圖表選項
+                const options = {
+                    title: 'Chart Title',
+                    // 其他選項設定...
+                };
+
+                // 建立圖表並繪製
+                const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                chart.draw(dataTable, options);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+    <!--
+    function drawChart() {
+        fetch('./gameStats')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // 確保你能夠看到資料在控制台的輸出
+                drawBarChart(data); // 調用繪製橫向長條圖的函式
+            })
+    }
+
+    function drawBarChart(data) {
+        // 橫向長條圖表
+        var barData = google.visualization.arrayToDataTable([
+            ['遊戲', '遊玩次數'],data
+            // 在這裡添加更多遊戲和遊玩次數的資料
+        ]);
+
+        data.forEach(entry => {
+            barData.addRow([entry.gameName, entry.playTimes]);
+        });
 
 		var barOptions = {
 			chart : {
@@ -36,8 +75,10 @@
 		var barChart = new google.charts.Bar(document
 				.getElementById('bar_chart'));
 		barChart.draw(barData, google.charts.Bar.convertOptions(barOptions));
-
-		// 月曆圖表
+		-->
+    /*]]>*/
+        
+<!--		 // 月曆圖表
 		var calendarData = new google.visualization.DataTable();
 		calendarData.addColumn({
 			type : 'date',
@@ -47,70 +88,36 @@
 			type : 'number',
 			id : '遊戲次數'
 		});
-		calendarData.addRows([ [ new Date(2024, 0, 1), 1 ],
-				[ new Date(2024, 0, 15), 10 ], [ new Date(2024, 1, 1), 8 ],
-				[ new Date(2024, 3, 25), 5 ], [ new Date(2024, 5, 12), 6 ],
-				[ new Date(2023, 10, 10), 10 ],
+		calendarData.addRows([ [ new Date(2024, 0, 1), 5 ],
+				[ new Date(2024, 0, 15), 10 ], [ new Date(2024, 1, 1), 4 ],
+				[ new Date(2023, 10, 6), 6 ], [ new Date(2024, 11, 25), 8 ],
 		// 在這裡添加更多日期和遊戲次數的資料
 		]);
 
 		var calendarOptions = {
-			title : "遊戲日期",
+			title : "遊戲日期統計",
 			height : 350,
 		};
-
 		var calendarChart = new google.visualization.Calendar(document
 				.getElementById('calendar_chart'));
 		calendarChart.draw(calendarData, calendarOptions);
 	}
+-->
 </script>
 </head>
 <body>
-<header xmlns:th="http://www.thymeleaf.org" th:fragment="header">
-
-		<nav
-			class="navbar navbar-expand-lg navbar-light bg-info p-2 text-dark bg-opacity-25">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="#">桌遊紀錄</a>
-				<button class="navbar-toggler" type="button"
-					data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent" aria-expanded="false"
-					aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="#">首頁</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/gameRecords/createForm}">建立遊戲</a></li>
-						<li class="nav-item"><a class="nav-link"
-							th:href="@{/gameRecords/showRecords}">遊戲紀錄</a></li>
-
-					</ul>
-					<form class="d-flex">
-						<input class="form-control me-2" type="search"
-							placeholder="Search" aria-label="Search">
-						<button class="btn btn-outline-success" type="submit">搜尋</button>
-					</form>
-				</div>
-			</div>
-		</nav>
-
-	</header>
 	<div th:insert="header :: header"></div>
 
-	
-		<div class="col-md-6 m-5">
+	<div>
+		<div class="col-md-6  m-5">
 			<!-- 橫向長條圖表容器 -->
 			<div id="bar_chart" style="height: 300px;"></div>
 		</div>
-
 		<div class="col-md-6 m-5">
 			<!-- 月曆圖表容器 -->
 			<div id="calendar_chart"></div>
 		</div>
-
+	</div>
 
 
 	<!-- Bootstrap JS 和 Popper.js -->

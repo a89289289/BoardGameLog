@@ -20,20 +20,22 @@
 	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
 
-		<form action="./saveRecord" method="post" th:object="${gameRecord}">
+		<form action="./saveRecord" method="post" th:object="${gameRecord}"
+			enctype="multipart/form-data">
 			<div class="form-group m-3 position-relative">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
 					placeholder="輸入遊戲名稱" oninput="handleInput()">
 				<ul class="list-group autocomplete-results" id="autocompleteResults"></ul>
-				<div id="thumbnailContainer" class="p-3 mb-2 bg-success text-white"></div>
+				<div id="thumbnailContainer"
+					class="position-absolute top-100 start-50 translate-middle-x"></div>
 			</div>
 			<div class="form-group m-3">
 				<label for="gameDate">遊戲日期</label> <input type="date"
 					class="form-control" id="gameDate" th:field="*{gameDate}" required>
 			</div>
 			<div class="form-group m-3">
-				<label for="photo">上傳照片</label> <input type="text"
+				<label for="photo">上傳照片</label> <input type="file"
 					class="form-control-file" id="photo" th:field="*{photo}">
 			</div>
 
@@ -42,7 +44,7 @@
 				<textarea class="form-control" id="textRecord"
 					th:field="*{textRecord}" rows="3" placeholder="輸入文字記錄"></textarea>
 			</div>
-			
+
 			<div class="form-group m-3">
 				<label>玩家</label>
 				<div th:each="player, playerStat : *{players}">
@@ -64,7 +66,7 @@
 					</div>
 				</div>
 				<button type="button" class="btn btn-success" onclick="addPlayer()">新增玩家</button>
-			</div> 
+			</div>
 
 			<button type="submit" class="btn btn-primary">提交</button>
 		</form>
@@ -121,48 +123,36 @@
 		}
 
 		function showThumbnail(data) {
-			console.log("API Response:", data);
-		    var thumbnailContainer = document.getElementById("thumbnailContainer");
-		    var thumbnailUrlElement = data.querySelector("item > thumbnail");
+			var thumbnailContainer = document
+					.getElementById("thumbnailContainer");
+			var thumbnailUrlElement = data.querySelector("item > thumbnail");
 
-		    // 清空縮圖容器
-		    thumbnailContainer.innerHTML = "";
+			// 清空縮圖容器
+			thumbnailContainer.innerHTML = "";
 
-		    if (thumbnailUrlElement) {
-		        var thumbnailUrl = thumbnailUrlElement.textContent;
-		        console.log("Thumbnail URL:", thumbnailUrl); // 添加调试信息
-		        // 顯示縮圖
-		        thumbnailContainer.innerHTML = '<img src="' + thumbnailUrl + '" alt="Game Thumbnail" class="img-thumbnail">';
-		    }
+			if (thumbnailUrlElement) {
+				var thumbnailUrl = thumbnailUrlElement.textContent;
+				// 顯示縮圖
+				thumbnailContainer.innerHTML = '<img src="' + thumbnailUrl + '" alt="Game Thumbnail" class="img-thumbnail">';
+			}
 		}
 
 		function addPlayer() {
-            var index = document.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
-            var playerHtml = '<div class="row g-2 mb-2">'
-                + '<div class="col-md-3">'
-                + '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
-                + '</div>'
-                + '<div class="col-md-3">'
-                + '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
-                + '</div>'
-                + '<div class="col-md-4">'
-                + '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
-                + '</div>'
-                + '<div class="col-md-2">'
-                + '<button type="button" class="btn btn-danger" onclick="deletePlayer(this)">刪除玩家</button>'
-                + '</div>'
-                + '</div>';
+			var index = document
+					.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
+			var playerHtml = '<div class="form-row mb-2">'
+					+ '<div class="col">'
+					+ '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
+					+ '</div>'
+					+ '<div class="col">'
+					+ '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
+					+ '</div>'
+					+ '<div class="col">'
+					+ '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
+					+ '</div>' + '</div>';
 
-            $(".form-group > .btn-success").before(playerHtml);
-        }
-
-        function deletePlayer(button) {
-            // 找到要刪除的玩家行
-            var playerRow = button.closest('.row');
-            // 刪除該行
-            playerRow.remove();
-        }
-    </script>
+			$(".form-group > .btn-success").before(playerHtml);
+		}
 	</script>
 </body>
 </html>
