@@ -1,86 +1,94 @@
 <!DOCTYPE html>
 <html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
-          crossorigin="anonymous">
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+	crossorigin="anonymous">
 
-    <title>顯示記錄</title>
+<title>顯示記錄</title>
 </head>
 <body>
-<div th:insert="header :: header"></div>
-<div class="container mt-5">
+	<div th:insert="header :: header"></div>
+	<div class="container mt-5">
 
-    <table class="table table-striped table-responsive">
-        <thead>
-        <tr>
-            <th></th>
-            <th>遊戲名稱</th>
-            <th>遊戲日期</th>
-            <th>照片</th>
-            <th>文字記錄</th>
-            <th>玩家名稱</th>
-            <th>分數</th>
-            <th>備註</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="gameRecord : ${gameRecords}">
-            <td>
-                <button class="btn btn-success btn-sm">修改</button>
-                <button class="btn btn-danger btn-sm">刪除</button>
-            </td>
-            <td th:text="${gameRecord.gameName}"></td>
-            <td th:text="${gameRecord.gameDate}"></td>
-            <td th:text="${gameRecord.photo}"></td>
-            <td th:text="${gameRecord.textRecord}"></td>
+		<table class="table table-striped table-responsive">
+			<thead>
+				<tr>
+					<th></th>
+					<th>遊戲名稱</th>
+					<th>遊戲日期</th>
+					<th>照片</th>
+					<th>文字記錄</th>
+					<th>玩家名稱</th>
+					<th>分數</th>
+					<th>備註</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="gameRecord : ${gameRecords}">
+					<td>
+						<!--           <button class="btn btn-success btn-sm">修改</button>  -->
+						<a class="btn btn-success btn-sm"
+						th:href="@{/gameRecords/editRecord/{id}(id=${gameRecord.id})}">修改</a>
+						<a class="btn btn-danger btn-sm"
+						th:href="@{/gameRecords/deleteRecord/{id}(id=${gameRecord.id})}">刪除</a>
+					</td>
+					<td th:text="${gameRecord.gameName}"></td>
+					<td th:text="${gameRecord.gameDate}"></td>
+					<td th:text="${gameRecord.photo}"></td>
+					<td th:text="${gameRecord.textRecord}"></td>
 
-            <!-- 新增遍歷每個玩家的列 -->
-            <td>
-                <div th:each="player : ${gameRecord.players}">
-                    <!-- 玩家名稱 -->
-                    <div th:text="${player.playerName}"></div>
-                </div>
-            </td>
-            <td>
-                <div th:each="player : ${gameRecord.players}">
-                    <!-- 分數 -->
-                    <div th:text="${player.playerScore}"></div>
-                </div>
-            </td>
-            <td>
-                <div th:each="player : ${gameRecord.players}">
-                    <!-- 備註 -->
-                    <div th:text="${player.playerNote}"></div>
-                </div>
-            </td>
-            <!-- 遍歷每個玩家的列結束 -->
-        </tr>
-        </tbody>
-    </table>
-</div>
+					<!-- 新增遍歷每個玩家的列 -->
+					<td>
+						<div th:each="player : ${gameRecord.players}">
+							<!-- 玩家名稱 -->
+							<div th:text="${player.playerName}"></div>
+						</div>
+					</td>
+					<td>
+						<div th:each="player : ${gameRecord.players}">
+							<!-- 分數 -->
+							<div th:text="${player.playerScore}"></div>
+						</div>
+					</td>
+					<td>
+						<div th:each="player : ${gameRecord.players}">
+							<!-- 備註 -->
+							<div th:text="${player.playerNote}"></div>
+						</div>
+					</td>
+					<!-- 遍歷每個玩家的列結束 -->
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-        crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+		crossorigin="anonymous"></script>
 
-<script>
-    
+	<script>
+	<!--	document.getElementById('modifyRecordBtn').addEventListener('click',
+				function() {
+					console.log('修改記錄按鈕被點擊');
+				});
 
-    document.getElementById('modifyRecordBtn').addEventListener('click',
-            function () {
-                console.log('修改記錄按鈕被點擊');
-            });
-
-    document.getElementById('deleteRecordBtn').addEventListener('click',
-            function () {
-                console.log('刪除記錄按鈕被點擊');
-            });
-</script>
+function deleteRecord(index) {
+    var recordId = document.getElementById('deleteRecordBtn_' + index).getAttribute('data-id');
+    if (confirm('確定要刪除記錄嗎？')) {
+        window.location.href = '/gameRecords/deleteRecord/' + recordId;
+    };
+}-->
+	</script>
 
 </body>
 </html>

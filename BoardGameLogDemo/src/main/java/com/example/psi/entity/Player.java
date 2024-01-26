@@ -1,5 +1,7 @@
 package com.example.psi.entity;
 
+import java.util.Set;
+
 import org.springframework.data.relational.core.mapping.Table;
 
 import jakarta.persistence.Entity;
@@ -7,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;  // 修改这里
 import lombok.Data;  
 
 @Data
@@ -15,8 +17,7 @@ import lombok.Data;
 @Table(name = "players")
 public class Player {
 
-  
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,9 +25,9 @@ public class Player {
     private int playerScore;
     private String playerNote;
 
-    @ManyToOne
-    @JoinColumn(name = "game_record_id")
-    private GameRecord gameRecord;
+    @OneToMany  // 修改这里
+    @JoinColumn(name = "player_id")  // 指定外键列的名称
+    private Set<GameRecord> gameRecords;
 
     // Getters and setters
 
