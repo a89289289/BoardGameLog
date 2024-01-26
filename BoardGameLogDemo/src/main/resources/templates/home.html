@@ -16,7 +16,7 @@
         'packages': ['bar']
     });
     google.charts.setOnLoadCallback(drawChart);
-    
+    <!--  
     function drawChart() {
         // 使用 fetch 取得資料
         fetch('./gameStats')
@@ -43,7 +43,8 @@
             })
             .catch(error => console.error('Error fetching data:', error));
     }
-    <!--
+    -->
+   
     function drawChart() {
         fetch('./gameStats')
             .then(response => response.json())
@@ -75,10 +76,10 @@
 		var barChart = new google.charts.Bar(document
 				.getElementById('bar_chart'));
 		barChart.draw(barData, google.charts.Bar.convertOptions(barOptions));
-		-->
+		
     /*]]>*/
         
-<!--		 // 月曆圖表
+		 // 月曆圖表
 		var calendarData = new google.visualization.DataTable();
 		calendarData.addColumn({
 			type : 'date',
@@ -102,7 +103,7 @@
 				.getElementById('calendar_chart'));
 		calendarChart.draw(calendarData, calendarOptions);
 	}
--->
+
 </script>
 </head>
 <body>

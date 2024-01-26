@@ -35,10 +35,11 @@ public class GameController {
     }
 
     @PostMapping("/saveRecord")
-    public String saveRecord(@ModelAttribute GameRecord gameRecord, @ModelAttribute Player player) {
+    public String saveRecord(@ModelAttribute GameRecord gameRecord) {
     	System.out.println(gameRecord.toString());
-    	System.out.println(player.toString());
+    	
         gameService.saveGameRecord(gameRecord);
+        
         return "redirect:/gameRecords/showRecords";
     }
 
@@ -83,19 +84,19 @@ public class GameController {
     @Autowired
     private GameRecordService gameRecordService;
 
-//    @GetMapping("/gameStats")
-//    public String gameStats(Model model) {
-//        Map<String, Long> gamePlayTimes = gameRecordService.countGamePlayTimes();
-//        model.addAttribute("gamePlayTimes", gamePlayTimes);
-//        System.out.println(gamePlayTimes);
-//        return "gameStats"; // 这里返回Thymeleaf模板的名称
-//    }
+    @GetMapping("/gameStats")
+    public String gameStats(Model model) {
+        Map<String, Long> gamePlayTimes = gameRecordService.countGamePlayTimes();
+        model.addAttribute("gamePlayTimes", gamePlayTimes);
+        System.out.println(gamePlayTimes);
+        return "gameStats"; // 这里返回Thymeleaf模板的名称
+    }
     
-  @GetMapping("/gameStats")
-  @ResponseBody
-  public Map<String, Long> gameStats() {
-      Map<String, Long> gamePlayTimes = gameRecordService.countGamePlayTimes();
-      System.out.println("in!");
-      return gamePlayTimes; // 这里返回Thymeleaf模板的名称
-  }
+//  @GetMapping("/gameStats")
+//  @ResponseBody
+//  public Map<String, Long> gameStats() {
+//      Map<String, Long> gamePlayTimes = gameRecordService.countGamePlayTimes();
+//      System.out.println("in!");
+//      return gamePlayTimes; // 这里返回Thymeleaf模板的名称
+//  }
 }
