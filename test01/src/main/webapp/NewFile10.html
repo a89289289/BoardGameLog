@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .chart {
+            display: flex;
+            flex-direction: row-reverse; /* 將條形圖水平顯示，從右到左 */
+            align-items: center;
+            height: 300px; /* 條形圖的高度 */
+            margin: 20px;
+        }
+
+        .bar {
+            background-color: #3498db; /* 條形的顏色 */
+            height: 20px; /* 條形的初始高度 */
+            margin: 5px; /* 條形之間的間距 */
+            transition: height 0.5s ease; /* 高度變化的過渡效果 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="chart">
+    <div class="bar" style="height: 100px;"></div>
+    <div class="bar" style="height: 150px;"></div>
+    <div class="bar" style="height: 80px;"></div>
+    <!-- 在這裡添加更多的條形，並設定不同的高度 -->
+</div>
+
+<script>
+    // 使用JavaScript來設定條形的高度
+    // 在這個例子中，可以使用某些數據源的值來動態設定條形的高度
+    // 例如，可以使用API或其他方式獲取數據並動態更新條形圖
+    // 這裡僅作為靜態示例
+    document.addEventListener('DOMContentLoaded', function () {
+        var bars = document.querySelectorAll('.bar');
+        bars.forEach(function (bar, index) {
+            // 每個條形的高度可以根據數據來設定
+            // 這裡只是靜態示例，所以使用固定的高度
+            var heights = [100, 150, 80]; // 靜態示例數據
+            bar.style.height = heights[index] + 'px';
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Game Plays Calendar</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Game Plays Calendar</h2>
+
+    <div id="calendar"></div>
+</div>
+
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/gameRecords/countGamePlaysByMonth",
+            dataType: "json",
+            success: function (data) {
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay'
+                    },
+                    events: $.map(data, function (count, month) {
+                        return {
+                            title: count + ' games',
+                            start: month + '-01',
+                            end: month + '-' + (new Date(month + '-01').getMonth() + 1) + '-01' // Set the end to the start of next month
+                        };
+                    })
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

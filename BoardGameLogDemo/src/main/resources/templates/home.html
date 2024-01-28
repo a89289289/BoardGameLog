@@ -8,62 +8,24 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
 <!-- Google Charts API -->
-<script type="text/javascript"
-	src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" th:inline="javascript">
-    /*<![CDATA[*/
-    google.charts.load('current', {
-        'packages': ['bar']
-    });
-    google.charts.setOnLoadCallback(drawChart);
-    <!--  
-    function drawChart() {
-        // 使用 fetch 取得資料
-        fetch('./gameStats')
-            .then(response => response.json())
-            .then(data => {
-                // 將資料轉換為 Google Charts 需要的格式
-                const chartData = Object.entries(data).map(([gameName, playTimes]) => [gameName, playTimes]);
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
 
-                // 建立資料表
-                const dataTable = new google.visualization.DataTable();
-                dataTable.addColumn('string', 'gameName');
-                dataTable.addColumn('number', 'playTimes');
-                dataTable.addRows(chartData);
+	google.charts.load('current', {		'packages' : [ 'bar', 'calendar' ]	});
+	google.charts.setOnLoadCallback(drawChart);
 
-                // 設定圖表選項
-                const options = {
-                    title: 'Chart Title',
-                    // 其他選項設定...
-                };
-
-                // 建立圖表並繪製
-                const chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-                chart.draw(dataTable, options);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
-    -->
-   
-    function drawChart() {
-        fetch('./gameStats')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data); // 確保你能夠看到資料在控制台的輸出
-                drawBarChart(data); // 調用繪製橫向長條圖的函式
-            })
-    }
-
-    function drawBarChart(data) {
-        // 橫向長條圖表
-        var barData = google.visualization.arrayToDataTable([
-            ['遊戲', '遊玩次數'],data
-            // 在這裡添加更多遊戲和遊玩次數的資料
-        ]);
-
-        data.forEach(entry => {
-            barData.addRow([entry.gameName, entry.playTimes]);
-        });
+	function drawChart() {
+		// 橫向長條圖表
+		var barData = google.visualization.arrayToDataTable([ 
+			[ '遊戲', '遊玩次數' ],
+				[ '遊戲1', 30 ], 
+				[ '遊戲2', 50 ], 
+				[ '遊戲3', 20 ], 
+				[ '遊戲4', 40 ],
+				[ '遊戲5', 25 ], 
+				[ '遊戲6', 35 ],
+		// 在這裡添加更多遊戲和遊玩次數的資料
+		]);
 
 		var barOptions = {
 			chart : {
@@ -76,10 +38,8 @@
 		var barChart = new google.charts.Bar(document
 				.getElementById('bar_chart'));
 		barChart.draw(barData, google.charts.Bar.convertOptions(barOptions));
-		
-    /*]]>*/
-        
-		 // 月曆圖表
+
+		// 月曆圖表
 		var calendarData = new google.visualization.DataTable();
 		calendarData.addColumn({
 			type : 'date',
@@ -99,12 +59,34 @@
 			title : "遊戲日期統計",
 			height : 350,
 		};
+
 		var calendarChart = new google.visualization.Calendar(document
 				.getElementById('calendar_chart'));
 		calendarChart.draw(calendarData, calendarOptions);
-	}
 
+		// 橫向長條圖表容器
+        var barChartContainer = document.getElementById('bar_chart');
+        // 月曆圖表容器
+        var calendarChartContainer = document.getElementById('calendar_chart');
+
+        // 設置背景顏色為透明
+        barChartContainer.style.backgroundColor = 'transparent';
+        calendarChartContainer.style.backgroundColor = 'transparent';
+    }
+	
 </script>
+
+<style type="text/css">
+body {
+	background-image: url("../static/image/bg.png");
+	background-size: cover;
+}
+
+#bar_chart, #calendar_chart {
+	background-color: transparent ;
+}
+</style>
+
 </head>
 <body>
 	<div th:insert="header :: header"></div>
@@ -128,3 +110,4 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+

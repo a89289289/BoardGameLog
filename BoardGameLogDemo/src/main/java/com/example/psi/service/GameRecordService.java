@@ -71,6 +71,27 @@ public class GameRecordService {
     	
         
     }
+    //統計次數
+    @Autowired
+    public GameRecordService(GameRecordRepository gameRecordRepository) {
+        this.gameRecordRepository = gameRecordRepository;
+    }
+
+    public List<Object[]> countGamePlays() {
+        return gameRecordRepository.countGamePlays();
+    }
     
+    
+
+    // 其他方法...
+
+    public List<GameRecord> searchRecords(String term) {
+        // 在这里实现搜索逻辑，可以使用你的 Repository 进行数据库查询
+        // 这里假设你有一个名为 gameRecordRepository 的 Repository
+
+        // 例如，假设你的实体类为 GameRecord，你可以调用类似的方法进行模糊查询
+        // 这里假设你在 GameRecordRepository 中有一个 findByGameNameContaining 方法
+        return gameRecordRepository.findByGameNameContaining(term);
+    }
    
 }

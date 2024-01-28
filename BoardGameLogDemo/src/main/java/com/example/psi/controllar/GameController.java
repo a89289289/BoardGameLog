@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.psi.entity.GameRecord;
@@ -39,7 +41,17 @@ public class GameController {
 		model.addAttribute("gameRecords", gameRecords);
 		return "home";
 	}
+//搜尋遊戲紀錄
+	@GetMapping("/search")
+	public String searchRecords(@RequestParam String term, Model model) {
+	    // 在這裡處理搜索邏輯，並將搜索結果添加到模型中
+	    List<GameRecord> searchResults = gameRecordService.searchRecords(term);
+	    model.addAttribute("searchResults", searchResults);
 
+	    return "displayRecords";
+	}
+	
+	
 	// 新增遊戲紀錄
 	@GetMapping("/createForm")
 	public String createForm(Model model) {
@@ -52,10 +64,32 @@ public class GameController {
 	public String saveRecord(@ModelAttribute GameRecord gameRecord) {
 		System.out.println(gameRecord.toString());
 
+		// Assuming Player is part of GameRecord
+		List<Player> players = gameRecord.getPlayers();
+		if (players != null && !players.isEmpty()) {
+			for (Player player : players) {
+				player.setGameRecord(gameRecord);
+			}
+		}
+
 		gameService.saveGameRecord(gameRecord);
+
+		// If needed, you can save players individually
+		// gameService.savePlayer(player);
 
 		return "redirect:/gameRecords/showRecords";
 	}
+
+//	// 儲存玩家資料
+//	@PostMapping("/savePlayers")
+//	public String savePlayers(@RequestBody List<Player> players) {
+//	    System.out.println(players.toString());
+//	    for (Player player : players) {
+//	        gameService.savePlayer(player);
+//	    }
+//
+//	    return "createGameRecord";
+//	}
 
 	// 修改遊戲紀錄
 	@GetMapping("/editRecord/{id}")
@@ -68,31 +102,32 @@ public class GameController {
 	}
 
 	@PostMapping("/editRecord/{id}")
-	public String updateRecord(@PathVariable("id") Long id, @ModelAttribute("gameRecord") GameRecord updatedGameRecord) {
-	    // 透過ID找到現有的遊戲紀錄
-	    GameRecord existingGameRecord = gameRecordRepository.findById(id)
-	            .orElseThrow(() -> new IllegalArgumentException("無效的遊戲紀錄ID：" + id));
+	public String updateRecord(@PathVariable("id") Long id,
+			@ModelAttribute("gameRecord") GameRecord updatedGameRecord) {
+		// 透過ID找到現有的遊戲紀錄
+		GameRecord existingGameRecord = gameRecordRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("無效的遊戲紀錄ID：" + id));
 
-	    // 更新現有遊戲紀錄的內容
-	    existingGameRecord.setGameName(updatedGameRecord.getGameName());
-	    existingGameRecord.setGameDate(updatedGameRecord.getGameDate());
-	    existingGameRecord.setPhoto(updatedGameRecord.getPhoto());
+		// 更新現有遊戲紀錄的內容
+		existingGameRecord.setGameName(updatedGameRecord.getGameName());
+		existingGameRecord.setGameDate(updatedGameRecord.getGameDate());
+		existingGameRecord.setPhotoFile(updatedGameRecord.getPhotoFile());
 
-	    // 清空既有的玩家列表
-	    existingGameRecord.getPlayers().clear();
+		// 清空既有的玩家列表
+		existingGameRecord.getPlayers().clear();
 
-	    // 將新的玩家列表加入現有遊戲紀錄
-	    if (updatedGameRecord.getPlayers() != null) {
-	        for (Player player : updatedGameRecord.getPlayers()) {
-	            existingGameRecord.addPlayer(player);
-	        }
-	    }
+		// 將新的玩家列表加入現有遊戲紀錄
+		if (updatedGameRecord.getPlayers() != null) {
+			for (Player player : updatedGameRecord.getPlayers()) {
+				existingGameRecord.addPlayer(player);
+			}
+		}
 
-	    // 保存更新後的遊戲紀錄
-	    gameRecordRepository.save(existingGameRecord);
+		// 保存更新後的遊戲紀錄
+		gameRecordRepository.save(existingGameRecord);
 
-	    // 重定向到顯示遊戲紀錄的頁面
-	    return "redirect:/gameRecords/showRecords";
+		// 重定向到顯示遊戲紀錄的頁面
+		return "redirect:/gameRecords/showRecords";
 	}
 
 	// 刪除遊戲紀錄
@@ -110,6 +145,7 @@ public class GameController {
 		return "showRecords";
 	}
 
+//	//統計遊戲數據
 //    @GetMapping("/getDataForCharts")
 //    @ResponseBody
 //    public Map<String, Object> getDataForCharts() {
@@ -127,13 +163,19 @@ public class GameController {
 //        return data;
 //    }
 
-	@GetMapping("/gameStats")
-	public String gameStats(Model model) {
-		Map<String, Long> gamePlayTimes = gameRecordService.countGamePlayTimes();
-		model.addAttribute("gamePlayTimes", gamePlayTimes);
-		System.out.println(gamePlayTimes);
-		return "gameStats"; // 这里返回Thymeleaf模板的名称
-	}
+	 
+
+	 @Autowired
+	    public GameController(GameRecordService gameRecordService) {
+	        this.gameRecordService = gameRecordService;
+	    }
+
+	    @GetMapping("/gamePlays")
+	    public String showGamePlays(Model model) {
+	        List<Object[]> gamePlays = gameRecordService.countGamePlays();
+	        model.addAttribute("gamePlays", gamePlays);
+	        return "gamePlays"; // Thymeleaf will look for gamePlays.html in the templates folder
+	    }
 //    
 //  @GetMapping("/gameStats")
 //  @ResponseBody

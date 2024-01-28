@@ -40,7 +40,7 @@
 					</td>
 					<td th:text="${gameRecord.gameName}"></td>
 					<td th:text="${gameRecord.gameDate}"></td>
-					<td th:text="${gameRecord.photo}"></td>
+					<td th:text="${gameRecord.photoFile}"></td>
 					<td th:text="${gameRecord.textRecord}"></td>
 
 					<!-- 新增遍歷每個玩家的列 -->
@@ -67,7 +67,11 @@
 			</tbody>
 		</table>
 	</div>
-
+<tbody>
+    <tr th:each="gameRecord : ${searchResults}">
+        <!-- 顯示搜索結果的內容 -->
+    </tr>
+</tbody>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

@@ -34,7 +34,7 @@
 			</div>
 			<div class="form-group m-3">
 				<label for="photo">上傳照片</label> <input type="file"
-					class="form-control-file" id="photo" th:field="*{photo}">
+					class="form-control-file" id="photo" th:field="*{photoFile}">
 			</div>
 
 			<div class="form-group m-3">
@@ -156,6 +156,54 @@
             $(".form-group > .btn-success").before(playerHtml);
         }
 
+		 function submitGameRecord() {
+	            // 取得遊戲記錄的部分
+	            var gameRecordData = {
+	                gameName: document.getElementById('gameName').value,
+	                gameDate: document.getElementById('gameDate').value,
+	                // 其他 gameRecord 的屬性
+	            };
+
+	            // 取得玩家的部分
+	            var playersData = [];
+	            var playerRows = document.querySelectorAll('.form-row');
+	            playerRows.forEach(function(row) {
+	                var playerName = row.querySelector('[placeholder="玩家名稱"]').value;
+	                var playerScore = row.querySelector('[placeholder="分數"]').value;
+	                var playerNote = row.querySelector('[placeholder="備註"]').value;
+
+	                playersData.push({
+	                    playerName: playerName,
+	                    playerScore: playerScore,
+	                    playerNote: playerNote
+	                });
+	            });
+
+	            // 將資料提交到後端
+	            var data = {
+	                gameRecord: gameRecordData,
+	                players: playersData
+	            };
+
+	            // 使用 AJAX 或其他方式提交 data 到後端的適當端點
+	            // 這裡僅作示例，實際上應該根據你的後端端點和需求進行適當的修改
+	            $.ajax({
+	                type: 'POST',
+	                url: './your-backend-endpoint',
+	                contentType: 'application/json',
+	                data: JSON.stringify(data),
+	                success: function(response) {
+	                    // 處理成功的回應
+	                    console.log(response);
+	                },
+	                error: function(error) {
+	                    // 處理錯誤
+	                    console.error(error);
+	                }
+	            });
+	        }
+		
+		
         function deletePlayer(button) {
             // 找到要刪除的玩家行
             var playerRow = button.closest('.row');
