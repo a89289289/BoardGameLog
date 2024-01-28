@@ -14,6 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta .persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 
@@ -35,18 +37,24 @@ public class GameRecord {
 
     private String textRecord;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "game_record_id")
-    private List<Player> players;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "player_game_record",
+            joinColumns = @JoinColumn(name = "game_record_id"),
+            inverseJoinColumns = @JoinColumn(name = "player_id")
+    )
+    private List<Player> players = new ArrayList<>();
 
     public void addPlayer(Player player) {
         if (players == null) {
             players = new ArrayList<>();
         }
         players.add(player);
-        player.getGameRecords().add(this);  // 注意這裡是 player.getGameRecords()
+        player.getGameRecords().add(this);
     }
-
+    public List<Player> getPlayers() {
+        return players;
+    }
     // Getters and setters
 
     // Constructors
