@@ -123,17 +123,16 @@ body {
     function confirmDelete() {
         var modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
 
-        var confirmBtn = document.getElementById('confirmBtn');
-        confirmBtn.onclick = function() {
-            // 使用Thymeleaf表達式構建URL
-            var deleteUrl = /*[[@{/gameRecords/deleteRecord/{id}(id=${recordIdToDelete})}]]*/;
-            
-            // 跳轉到刪除記錄的URL
-            window.location.href = deleteUrl;
-        };
+        function confirmDelete() {
+            var modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
 
-        modal.show();
-    }
+            var confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.onclick = function() {
+                window.location.href = /*[[@{/gameRecords/deleteRecord/}]]*/ + recordIdToDelete;
+            };
+
+            modal.show();
+        }
 </script>
 
 </body>

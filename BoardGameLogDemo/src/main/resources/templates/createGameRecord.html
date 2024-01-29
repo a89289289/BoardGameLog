@@ -28,7 +28,7 @@ body {
 	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
 
-		<form action="#" th:action="@{./saveRecord}" method="post" th:object="${gameRecord}">
+		<form id="myForm" method="post" th:object="${gameRecord}" enctype="multipart/form-data">
 			<div class="form-group m-3 position-relative">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
@@ -41,8 +41,8 @@ body {
 					class="form-control" id="gameDate" th:field="*{gameDate}" required>
 			</div>
 			<div class="form-group m-3">
-				<label for="photo">上傳照片</label> <input type="file"
-					class="form-control-file" id="photo" th:field="*{photoFile}">
+				<label for="photo">上傳照片</label> 
+				<input type="file" class="form-control-file" id="photo" th:field="*{photoFile}">
 			</div>
 
 			<div class="form-group m-3">
@@ -79,6 +79,29 @@ body {
 	</div>
 
 	<script>
+		$(document).ready(function () {                 
+	        $('#myForm').submit(function (event) { 
+	            event.preventDefault();                 
+	            var form = document.getElementById('myForm'); 
+	            var formData = new FormData(form); 
+	            formData.append('playersCtn', index);
+	            $.ajax({ 
+	                url: './saveRecord2', 
+	                method: 'POST', 
+	                data: formData, 
+	                processData: false, 
+	                contentType: false, 
+	                success: function (response) {                       
+	                    alert('Your form has been sent successfully.'); 
+	                }, 
+	                error: function (xhr, status, error) {                        
+	                    alert('Your form was not sent successfully.'); 
+	                    console.error(error); 
+	                } 
+	            }); 
+	        }); 
+	    }); 
+		
 		function handleInput() {
 			var searchTerm = document.getElementById("gameName").value;
 			var autocompleteResults = document
@@ -155,25 +178,28 @@ body {
 	        });
 	    }
 
-
+	    var index = 0;
+	    
 		function addPlayer() {
-            var index = document.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
-            var playerHtml = '<div class="row g-2 mb-2">'
-                + '<div class="col-md-3">'
-                + '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
-                + '</div>'
-                + '<div class="col-md-3">'
-                + '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
-                + '</div>'
-                + '<div class="col-md-4">'
-                + '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
-                + '</div>'
-                + '<div class="col-md-2">'
-                + '<button type="button" class="btn btn-danger" onclick="deletePlayer(this)">刪除玩家</button>'
-                + '</div>'
-                + '</div>';
+            var playerHtml = `    
+		        <div class="row g-2 mb-2">
+		            <div class="col-md-3">
+		                <input type="text" class="form-control" placeholder="玩家名稱" name="${index}_playerName" th:field="*{players[__${index}__].playerName}" required>
+		            </div>
+		            <div class="col-md-3">
+		                <input type="number" class="form-control" placeholder="分數" name="${index}_playerScore" th:field="*{players[__${index}__].playerScore}" required>
+		            </div>
+		            <div class="col-md-4">
+		                <input type="text" class="form-control" placeholder="備註" name="${index}_playerNote" th:field="*{players[__${index}__].playerNote}">
+		            </div>
+		            <div class="col-md-2">
+		                <button type="button" class="btn btn-danger" onclick="deletePlayer(this)">刪除玩家</button>
+		            </div>
+		        </div>
+        	`;
 
             $(".form-group > .btn-success").before(playerHtml);
+            index++;
         }
 
 		 function submitGameRecord() {
@@ -221,7 +247,7 @@ body {
 	                    console.error(error);
 	                }
 	            });
-	        }
+	     }
 		
 		
         function deletePlayer(button) {

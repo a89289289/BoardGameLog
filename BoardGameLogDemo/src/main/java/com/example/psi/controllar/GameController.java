@@ -1,8 +1,11 @@
 package com.example.psi.controllar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.psi.entity.GameRecord;
 import com.example.psi.entity.Player;
@@ -62,10 +66,75 @@ public class GameController {
 		model.addAttribute("gameRecord", new GameRecord());
 		return "createGameRecord";
 	}
+	
+	/**
+	 * {
+	 *   gameName="Get Smart", 
+	 *   gameDate=2024-01-29, 
+	 *   textRecord=www, 
+	 *   0_playerName=A, 
+	 *   0_playerScore=5, 
+	 *   0_playerNote=sdsdas, 
+	 *   1_playerName=B, 
+	 *   1_playerScore=55, 
+	 *   1_playerNote=sdsdfsfsdf,
+	 *   playersCtn=2
+	 *  }
+	 * @param body
+	 * @return
+	 */
+	@PostMapping("/saveRecord2")
+	public String saveRecord2(
+			@RequestParam(value = "photoFile", required = false) MultipartFile file,
+			@RequestParam(value = "gameName", required = false) String gameName,
+			@RequestParam("gameDate") String gameDate,
+			@RequestParam(value = "textRecord", required = false) String textRecord,
+			@RequestParam Map<String, String> body) {
+		
+		List<Player> players = getPlayersByFormBody(body);
+		
+		GameRecord gameRecord = new GameRecord();
+		gameRecord.setGameName(gameName);
+		gameRecord.setGameDate(gameDate);
+		gameRecord.setTextRecord(textRecord);
+		gameRecord.setPhotoFile(file.getOriginalFilename());
+		gameRecord.setPlayers(players);
+		
+		gameService.saveGameRecord(gameRecord);
+		
+		return "redirect:/gameRecords/showRecords";
+	}
+	
+	private List<Player> getPlayersByFormBody(Map<String, String> body) {
+		
+		Set<String> keys = body.keySet();
+		
+		Integer playersCtn = Integer.parseInt(body.get("playersCtn"));
+		
+		List<Player> players = new ArrayList<>();
+		for(int i=0 ;i<playersCtn ; i++) {
+			Player player = new Player();
+			final Integer index = Integer.valueOf(i);
+			Set<String> playerKeys = keys.stream().filter(key-> key.startsWith(index+"_")).collect(Collectors.toSet());
+			for(String key:playerKeys) {
+				if(key.endsWith("playerName")) {
+					player.setPlayerName(body.get(key));
+				} else if(key.endsWith("playerScore")) {
+					player.setPlayerScore(Integer.parseInt(body.get(key)));
+				} else if(key.endsWith("playerNote")) {
+					player.setPlayerNote(body.get(key));
+				}
+			}
+			players.add(player);
+		}
+		
+		return players;
+	}
 
 	// 儲存遊戲紀錄
 	@PostMapping("/saveRecord")
-	public String saveRecord(@ModelAttribute GameRecord gameRecord) {
+	public String saveRecord(
+			@ModelAttribute GameRecord gameRecord) {
 		System.out.println(gameRecord.toString());
 
 		// Assuming Player is part of GameRecord
