@@ -9,38 +9,49 @@
 	rel="stylesheet"
 	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
 	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 	crossorigin="anonymous"></script>
 <title>建立遊戲</title>
+
+<style th:inline="text">
+body {
+	background-image: url([[@{/image/bg.png}]]);
+	background-size: cover;
+}
+</style>
+
 </head>
 <body>
-	<div th:replace="fragments/header :: header"></div>
+	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
-		<form action="/gameRecords/saveRecord" method="post"
-			th:object="${gameRecord}">
-			<div class="form-group">
+
+		<form action="#" th:action="@{./saveRecord}" method="post" th:object="${gameRecord}">
+			<div class="form-group m-3 position-relative">
 				<label for="gameName">遊戲名稱</label> <input type="text"
 					class="form-control" id="gameName" th:field="*{gameName}"
-					placeholder="輸入遊戲名稱">
+					placeholder="輸入遊戲名稱" oninput="handleInput()">
+				<ul class="list-group autocomplete-results" id="autocompleteResults"></ul>
+				<div id="thumbnailContainer" class="mt-1"></div>
 			</div>
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="gameDate">遊戲日期</label> <input type="date"
 					class="form-control" id="gameDate" th:field="*{gameDate}" required>
 			</div>
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="photo">上傳照片</label> <input type="file"
-					class="form-control-file" id="photo" th:field="*{photo}">
+					class="form-control-file" id="photo" th:field="*{photoFile}">
 			</div>
 
-			<div class="form-group">
+			<div class="form-group m-3">
 				<label for="textRecord">文字記錄</label>
 				<textarea class="form-control" id="textRecord"
 					th:field="*{textRecord}" rows="3" placeholder="輸入文字記錄"></textarea>
 			</div>
-
-			<div class="form-group">
+			
+			<div class="form-group m-3">
 				<label>玩家</label>
 				<div th:each="player, playerStat : *{players}">
 					<div class="form-row mb-2">
@@ -61,34 +72,164 @@
 					</div>
 				</div>
 				<button type="button" class="btn btn-success" onclick="addPlayer()">新增玩家</button>
-			</div>
+			</div> 
 
 			<button type="submit" class="btn btn-primary">提交</button>
 		</form>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 	<script>
-		function addPlayer() {
-			var index = document
-					.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
-			var playerHtml = '<div class="form-row mb-2">'
-					+ '<div class="col">'
-					+ '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
-					+ '</div>'
-					+ '<div class="col">'
-					+ '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
-					+ '</div>'
-					+ '<div class="col">'
-					+ '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
-					+ '</div>' + '</div>';
+		function handleInput() {
+			var searchTerm = document.getElementById("gameName").value;
+			var autocompleteResults = document
+					.getElementById("autocompleteResults");
+			var thumbnailContainer = document
+					.getElementById("thumbnailContainer");
 
-			$(".form-group > .btn-success").before(playerHtml);
+			// 若輸入字詞不為空，執行即時搜尋提示
+			if (searchTerm.length > 0) {
+				// 發送即時搜尋提示請求
+				var url = "https://boardgamegeek.com/xmlapi2/search?query="
+						+ encodeURIComponent(searchTerm) + "&type=boardgame";
+				$.ajax({
+					url : url,
+					type : 'GET',
+					success : function(data) {
+						showAutocompleteResults(data);
+						showThumbnail(data);
+					}
+				});
+			} else {
+				// 清空即時搜尋提示和縮圖
+				autocompleteResults.innerHTML = "";
+				thumbnailContainer.innerHTML = "";
+			}
 		}
-	</script>
+
+		function showAutocompleteResults(data) {
+	        var autocompleteResults = document.getElementById("autocompleteResults");
+	        var thumbnailContainer = document.getElementById("thumbnailContainer");
+
+	        // 顯示搜尋結果
+	        autocompleteResults.innerHTML = "";
+	        thumbnailContainer.innerHTML = "";
+
+	        var results = data.querySelectorAll("item > name[type='primary']");
+	        results.forEach(function (result) {
+	            var li = document.createElement("li");
+	            li.className = "list-group-item";
+	            li.textContent = result.getAttribute("value");
+	            li.onclick = function () {
+	                // 點擊提示時，將提示內容填入輸入框
+	                document.getElementById("gameName").value = result.getAttribute("value");
+	                // 清空提示列表
+	                autocompleteResults.innerHTML = "";
+
+	                // 顯示遊戲縮圖
+	                var gameId = result.parentNode.getAttribute("id");
+	                showThumbnail(gameId);
+	            };
+	            autocompleteResults.appendChild(li);
+	        });
+	    }
+
+	    function showThumbnail(gameId) {
+	        var thumbnailContainer = document.getElementById("thumbnailContainer");
+
+	        // 發送獲取遊戲縮圖的請求
+	        var thumbnailUrl = "https://boardgamegeek.com/xmlapi2/thing?id=" + gameId + "&stats=1";
+	        $.ajax({
+	            url: thumbnailUrl,
+	            type: 'GET',
+	            success: function (data) {
+	                var thumbnailUrlElement = data.querySelector("thumbnail");
+	                var thumbnailUrl = thumbnailUrlElement ? thumbnailUrlElement.textContent : "";
+
+	                // 添加遊戲縮圖
+	                var thumbnailElement = document.createElement("img");
+	                thumbnailElement.src = thumbnailUrl;
+	                thumbnailElement.classList.add("rounded", "rounded-3"); // 添加圓角樣式和大小
+	                thumbnailContainer.innerHTML = ""; // 清空之前的縮圖
+	                thumbnailContainer.appendChild(thumbnailElement);
+	            }
+	        });
+	    }
+
+		function addPlayer() {
+            var index = document.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
+            var playerHtml = '<div class="row g-2 mb-2">'
+                + '<div class="col-md-3">'
+                + '<input type="text" class="form-control" placeholder="玩家名稱" th:field="*{players[__' + index + '__].playerName}" required>'
+                + '</div>'
+                + '<div class="col-md-3">'
+                + '<input type="number" class="form-control" placeholder="分數" th:field="*{players[__' + index + '__].playerScore}" required>'
+                + '</div>'
+                + '<div class="col-md-4">'
+                + '<input type="text" class="form-control" placeholder="備註" th:field="*{players[__' + index + '__].playerNote}">'
+                + '</div>'
+                + '<div class="col-md-2">'
+                + '<button type="button" class="btn btn-danger" onclick="deletePlayer(this)">刪除玩家</button>'
+                + '</div>'
+                + '</div>';
+
+            $(".form-group > .btn-success").before(playerHtml);
+        }
+
+		 function submitGameRecord() {
+	            // 取得遊戲記錄的部分
+	            var gameRecordData = {
+	                gameName: document.getElementById('gameName').value,
+	                gameDate: document.getElementById('gameDate').value,
+	                // 其他 gameRecord 的屬性
+	            };
+
+	            // 取得玩家的部分
+	            var playersData = [];
+	            var playerRows = document.querySelectorAll('.form-row');
+	            playerRows.forEach(function(row) {
+	                var playerName = row.querySelector('[placeholder="玩家名稱"]').value;
+	                var playerScore = row.querySelector('[placeholder="分數"]').value;
+	                var playerNote = row.querySelector('[placeholder="備註"]').value;
+
+	                playersData.push({
+	                    playerName: playerName,
+	                    playerScore: playerScore,
+	                    playerNote: playerNote
+	                });
+	            });
+
+	            // 將資料提交到後端
+	            var data = {
+	                gameRecord: gameRecordData,
+	                players: playersData
+	            };
+
+	            // 使用 AJAX 或其他方式提交 data 到後端的適當端點
+	            // 這裡僅作示例，實際上應該根據你的後端端點和需求進行適當的修改
+	            $.ajax({
+	                type: 'POST',
+	                url: './your-backend-endpoint',
+	                contentType: 'application/json',
+	                data: JSON.stringify(data),
+	                success: function(response) {
+	                    // 處理成功的回應
+	                    console.log(response);
+	                },
+	                error: function(error) {
+	                    // 處理錯誤
+	                    console.error(error);
+	                }
+	            });
+	        }
+		
+		
+        function deletePlayer(button) {
+            // 找到要刪除的玩家行
+            var playerRow = button.closest('.row');
+            // 刪除該行
+            playerRow.remove();
+        }
+    </script>
+
 </body>
 </html>

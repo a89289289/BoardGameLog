@@ -17,7 +17,7 @@ public class LoginController {
     @PostMapping("/login")
     public String login() {
         // Add custom login logic if needed
-        return "redirect:/home"; // Redirect to home page after successful login
+        return "redirect:/gameRecords/home"; // Redirect to home page after successful login
     }
 
     @GetMapping("/home")

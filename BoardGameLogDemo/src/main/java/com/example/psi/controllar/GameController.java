@@ -33,25 +33,29 @@ public class GameController {
 	private GameRecordRepository gameRecordRepository;
 	@Autowired
 	private GameRecordService gameRecordService;
+	@Autowired
+	public GameController(GameRecordService gameRecordService) {
+		this.gameRecordService = gameRecordService;
+	}
 
 	// 首頁(遊戲數據)
 	@GetMapping("/home")
 	public String home(Model model) {
-		List<GameRecord> gameRecords = gameRecordRepository.findAll();
-		model.addAttribute("gameRecords", gameRecords);
+		List<Object[]> gamePlays = gameRecordService.countGamePlays();
+		model.addAttribute("gamePlays", gamePlays);
 		return "home";
 	}
+
 //搜尋遊戲紀錄
 	@GetMapping("/search")
 	public String searchRecords(@RequestParam String term, Model model) {
-	    // 在這裡處理搜索邏輯，並將搜索結果添加到模型中
-	    List<GameRecord> searchResults = gameRecordService.searchRecords(term);
-	    model.addAttribute("searchResults", searchResults);
+		// 在這裡處理搜索邏輯，並將搜索結果添加到模型中
+		List<GameRecord> searchResults = gameRecordService.searchRecords(term);
+		model.addAttribute("searchResults", searchResults);
 
-	    return "displayRecords";
+		return "displayRecords";
 	}
-	
-	
+
 	// 新增遊戲紀錄
 	@GetMapping("/createForm")
 	public String createForm(Model model) {
@@ -163,19 +167,14 @@ public class GameController {
 //        return data;
 //    }
 
-	 
+	
 
-	 @Autowired
-	    public GameController(GameRecordService gameRecordService) {
-	        this.gameRecordService = gameRecordService;
-	    }
-
-	    @GetMapping("/gamePlays")
-	    public String showGamePlays(Model model) {
-	        List<Object[]> gamePlays = gameRecordService.countGamePlays();
-	        model.addAttribute("gamePlays", gamePlays);
-	        return "gamePlays"; // Thymeleaf will look for gamePlays.html in the templates folder
-	    }
+	@GetMapping("/gamePlays")
+	public String showGamePlays(Model model) {
+		List<Object[]> gamePlays = gameRecordService.countGamePlays();
+		model.addAttribute("gamePlays", gamePlays);
+		return "gamePlays"; // Thymeleaf will look for gamePlays.html in the templates folder
+	}
 //    
 //  @GetMapping("/gameStats")
 //  @ResponseBody

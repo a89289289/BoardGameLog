@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -70,8 +71,19 @@ public class GameRecord {
 //	}
 
 	private String textRecord;
+	
+	 public GameRecord(String gameName, String gameDate, String textRecord) {
+	        this.gameName = gameName;
+	        this.gameDate = gameDate;
+	        this.textRecord = textRecord;
+	    }
+	 
+	 // 新增的默認構造函數
+	    public GameRecord() {
+	        // JPA 需要的默認構造函數
+	    }
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinTable(name = "player_game_record", joinColumns = @JoinColumn(name = "game_record_id"), inverseJoinColumns = @JoinColumn(name = "player_id"))
 	private List<Player> players = new ArrayList<>();
 

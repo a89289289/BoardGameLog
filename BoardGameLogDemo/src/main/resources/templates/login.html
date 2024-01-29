@@ -14,12 +14,19 @@
 	}
 </script>
 
+<style th:inline="text">
+body {
+	background-image: url([[@{/image/bg.png}]]);
+	background-size: cover;
+}
+</style>
+</head>
 
 <body style="padding: 15px">
 		<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
 			<form id="loginForm" method="post" th:action="@{/login}" class="pure-form w-75">
 				<fieldset>
-					<legend>帳號登陸</legend>
+					<legend>帳號登入</legend>
 					<div class="mb-3">
 						<label for="username" class="form-label">帳號:</label>
 						<input type="text" class="form-control" id="username" name="username" placeholder="請輸入帳號" value="user123" required>

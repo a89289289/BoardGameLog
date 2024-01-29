@@ -23,4 +23,7 @@ public interface GameRecordRepository extends JpaRepository<GameRecord, Long> {
 
     
     List<GameRecord> findByGameNameContaining(String term);
+    
+    @Query("SELECT g FROM GameRecord g JOIN FETCH g.players")
+    List<GameRecord> findAllWithPlayers();
 }

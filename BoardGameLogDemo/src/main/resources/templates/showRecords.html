@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
@@ -9,13 +9,44 @@
 	rel="stylesheet"
 	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
 	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+	crossorigin="anonymous"></script>
+<title>建立遊戲</title>
 
-<title>顯示記錄</title>
+<style th:inline="text">
+body {
+	background-image: url([[@{/image/bg.png}]]);
+	background-size: cover;
+}
+</style>
+
 </head>
 <body>
 	<div th:insert="header :: header"></div>
 	<div class="container mt-5">
-
+	
+ <!-- 刪除確認的 Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">確認刪除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    確定要刪除記錄嗎？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmBtn">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 		<table class="table table-striped table-responsive">
 			<thead>
 				<tr>
@@ -35,8 +66,10 @@
 						<!--           <button class="btn btn-success btn-sm">修改</button>  -->
 						<a class="btn btn-success btn-sm"
 						th:href="@{/gameRecords/editRecord/{id}(id=${gameRecord.id})}">修改</a>
-						<a class="btn btn-danger btn-sm"
-						th:href="@{/gameRecords/deleteRecord/{id}(id=${gameRecord.id})}">刪除</a>
+						<a class="btn btn-danger btn-sm" data-bs-toggle="modal"
+						data-bs-target="#confirmationModal"
+						th:onclick="'javascript:setRecordId(\'' + ${gameRecord.id} + '\')'">
+							刪除 </a>
 					</td>
 					<td th:text="${gameRecord.gameName}"></td>
 					<td th:text="${gameRecord.gameDate}"></td>
@@ -67,11 +100,11 @@
 			</tbody>
 		</table>
 	</div>
-<tbody>
-    <tr th:each="gameRecord : ${searchResults}">
-        <!-- 顯示搜索結果的內容 -->
-    </tr>
-</tbody>
+	<tbody>
+		<tr th:each="gameRecord : ${searchResults}">
+			<!-- 顯示搜索結果的內容 -->
+		</tr>
+	</tbody>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -80,19 +113,28 @@
 		integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 		crossorigin="anonymous"></script>
 
-	<script>
-	<!--	document.getElementById('modifyRecordBtn').addEventListener('click',
-				function() {
-					console.log('修改記錄按鈕被點擊');
-				});
+	<script th:inline="javascript">
+    var recordIdToDelete;
 
-function deleteRecord(index) {
-    var recordId = document.getElementById('deleteRecordBtn_' + index).getAttribute('data-id');
-    if (confirm('確定要刪除記錄嗎？')) {
-        window.location.href = '/gameRecords/deleteRecord/' + recordId;
-    };
-}-->
-	</script>
+    function setRecordId(id) {
+        recordIdToDelete = id;
+    }
+
+    function confirmDelete() {
+        var modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+        var confirmBtn = document.getElementById('confirmBtn');
+        confirmBtn.onclick = function() {
+            // 使用Thymeleaf表達式構建URL
+            var deleteUrl = /*[[@{/gameRecords/deleteRecord/{id}(id=${recordIdToDelete})}]]*/;
+            
+            // 跳轉到刪除記錄的URL
+            window.location.href = deleteUrl;
+        };
+
+        modal.show();
+    }
+</script>
 
 </body>
 </html>

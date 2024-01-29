@@ -15,6 +15,14 @@
 	integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 	crossorigin="anonymous"></script>
 <title>建立遊戲</title>
+
+<style th:inline="text">
+body {
+	background-image: url([[@{/image/bg.png}]]);
+	background-size: cover;
+}
+</style>
+
 </head>
 <body>
 	<div th:insert="header :: header"></div>
@@ -26,7 +34,7 @@
 					class="form-control" id="gameName" th:field="*{gameName}"
 					placeholder="輸入遊戲名稱" oninput="handleInput()">
 				<ul class="list-group autocomplete-results" id="autocompleteResults"></ul>
-				<div id="thumbnailContainer" class="p-3 mb-2 bg-success text-white"></div>
+				<div id="thumbnailContainer" class="mt-1"></div>
 			</div>
 			<div class="form-group m-3">
 				<label for="gameDate">遊戲日期</label> <input type="date"
@@ -99,42 +107,54 @@
 		}
 
 		function showAutocompleteResults(data) {
-			var autocompleteResults = document
-					.getElementById("autocompleteResults");
+	        var autocompleteResults = document.getElementById("autocompleteResults");
+	        var thumbnailContainer = document.getElementById("thumbnailContainer");
 
-			// 顯示搜尋結果
-			autocompleteResults.innerHTML = "";
-			var results = data.querySelectorAll("item > name[type='primary']");
-			results.forEach(function(result) {
-				var li = document.createElement("li");
-				li.className = "list-group-item";
-				li.textContent = result.getAttribute("value");
-				li.onclick = function() {
-					// 點擊提示時，將提示內容填入輸入框
-					document.getElementById("gameName").value = result
-							.getAttribute("value");
-					// 清空提示列表
-					autocompleteResults.innerHTML = "";
-				};
-				autocompleteResults.appendChild(li);
-			});
-		}
+	        // 顯示搜尋結果
+	        autocompleteResults.innerHTML = "";
+	        thumbnailContainer.innerHTML = "";
 
-		function showThumbnail(data) {
-			console.log("API Response:", data);
-		    var thumbnailContainer = document.getElementById("thumbnailContainer");
-		    var thumbnailUrlElement = data.querySelector("item > thumbnail");
+	        var results = data.querySelectorAll("item > name[type='primary']");
+	        results.forEach(function (result) {
+	            var li = document.createElement("li");
+	            li.className = "list-group-item";
+	            li.textContent = result.getAttribute("value");
+	            li.onclick = function () {
+	                // 點擊提示時，將提示內容填入輸入框
+	                document.getElementById("gameName").value = result.getAttribute("value");
+	                // 清空提示列表
+	                autocompleteResults.innerHTML = "";
 
-		    // 清空縮圖容器
-		    thumbnailContainer.innerHTML = "";
+	                // 顯示遊戲縮圖
+	                var gameId = result.parentNode.getAttribute("id");
+	                showThumbnail(gameId);
+	            };
+	            autocompleteResults.appendChild(li);
+	        });
+	    }
 
-		    if (thumbnailUrlElement) {
-		        var thumbnailUrl = thumbnailUrlElement.textContent;
-		        console.log("Thumbnail URL:", thumbnailUrl); // 添加调试信息
-		        // 顯示縮圖
-		        thumbnailContainer.innerHTML = '<img src="' + thumbnailUrl + '" alt="Game Thumbnail" class="img-thumbnail">';
-		    }
-		}
+	    function showThumbnail(gameId) {
+	        var thumbnailContainer = document.getElementById("thumbnailContainer");
+
+	        // 發送獲取遊戲縮圖的請求
+	        var thumbnailUrl = "https://boardgamegeek.com/xmlapi2/thing?id=" + gameId + "&stats=1";
+	        $.ajax({
+	            url: thumbnailUrl,
+	            type: 'GET',
+	            success: function (data) {
+	                var thumbnailUrlElement = data.querySelector("thumbnail");
+	                var thumbnailUrl = thumbnailUrlElement ? thumbnailUrlElement.textContent : "";
+
+	                // 添加遊戲縮圖
+	                var thumbnailElement = document.createElement("img");
+	                thumbnailElement.src = thumbnailUrl;
+	                thumbnailElement.classList.add("rounded", "rounded-3"); // 添加圓角樣式和大小
+	                thumbnailContainer.innerHTML = ""; // 清空之前的縮圖
+	                thumbnailContainer.appendChild(thumbnailElement);
+	            }
+	        });
+	    }
+
 
 		function addPlayer() {
             var index = document.querySelectorAll('[th\\:id^="gameRecord.players"]').length;
